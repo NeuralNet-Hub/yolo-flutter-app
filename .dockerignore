@@ -1,0 +1,42 @@
+# Docker ignore file
+.git
+.gitignore
+.pubignore
+*.md
+*.lock
+build
+output
+.dart_tool
+example/.dart_tool
+example/build
+example/output
+example/android/.gradle
+example/android/app/build
+example/ios/Podfile.lock
+example/ios/.symlinks
+example/ios/Flutter/Flutter.framework
+example/ios/Flutter/Flutter.podspec
+example/ios/.generated/
+example/ios/Flutter/GeneratedPluginRegistrant.*
+example/ios/Runner/Flutter/Flutter.framework
+example/ios/Runner/Flutter/Flutter.podspec
+example/ios/Runner.xcworkspace
+example/ios/.symlinks
+example/ios/Runner.xcodeproj
+example/ios/.generated/
+
+# IDE files
+.vscode
+.idea
+*.iml
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+test/
+*.test.dart

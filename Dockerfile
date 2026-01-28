@@ -1,0 +1,62 @@
+FROM ubuntu:22.04
+
+# Set environment variables
+#ARG FLUTTER_VERSION=3.29.0
+ARG FLUTTER_VERSION=3.38.8
+ENV FLUTTER_VERSION=$FLUTTER_VERSION
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV PATH="/flutter/bin:${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/platform-tools:${PATH}"
+
+LABEL org.opencontainers.image.source="https://github.com/iarunsaragadam/flutter-docker"
+LABEL org.opencontainers.image.description="Flutter Android Builder - Pre-configured Docker image for building Flutter Android applications. Includes Flutter SDK, Java 17, Android SDK, build tools, and NDK. Default command runs 'flutter clean && flutter pub get && flutter build apk --release'. Built for both amd64 and arm64 architectures."
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.documentation="https://github.com/iarunsaragadam/flutter-docker"
+
+
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    unzip \
+    xz-utils \
+    bash \
+    openjdk-17-jdk \
+    build-essential \
+    wget \
+    libglu1-mesa \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Android SDK
+RUN mkdir -p ${ANDROID_SDK_ROOT}/cmdline-tools && \
+    wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip && \
+    unzip commandlinetools-linux-*_latest.zip -d ${ANDROID_SDK_ROOT}/tmp && \
+    mv ${ANDROID_SDK_ROOT}/tmp/cmdline-tools ${ANDROID_SDK_ROOT}/cmdline-tools/latest && \
+    rm -rf ${ANDROID_SDK_ROOT}/tmp commandlinetools-linux-*_latest.zip
+
+# Accept licenses
+RUN yes | sdkmanager --licenses
+
+# Install Android SDK components
+RUN sdkmanager "platform-tools" \
+    "platforms;android-33" \
+    "build-tools;33.0.2" \
+    "ndk;25.2.9519653"
+
+# Install Flutter
+RUN git clone https://github.com/flutter/flutter.git /flutter
+WORKDIR /flutter
+RUN git checkout $FLUTTER_VERSION
+RUN flutter doctor
+
+# Configure Flutter for Android
+RUN flutter config --no-analytics
+RUN flutter precache --android
+
+# Set the working directory for Flutter projects
+WORKDIR /app
+
+# Pre-download dependencies
+RUN flutter doctor -v
+
+# Default command
+CMD ["bash", "-c", "flutter clean && flutter pub get && flutter build apk --release"]

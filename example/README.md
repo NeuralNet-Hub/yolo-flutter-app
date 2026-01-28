@@ -17,6 +17,55 @@ This example app demonstrates how to use the [Ultralytics YOLO Flutter plugin](h
 - An Android or iOS device/emulator
 - [YOLO model files](https://docs.ultralytics.com/models/) (included in the assets)
 
+## 🐳 Docker Deployment (Recommended)
+
+The recommended way to run this example app is using Docker, which provides a consistent environment without requiring local Flutter SDK setup.
+
+### Using Docker
+
+#### 1. Build the Docker image
+
+```bash
+docker build -t yolo-flutter-example .
+```
+
+#### 2. Run the application
+
+```bash
+# Run with port mapping (recommended)
+docker run -p 8080:8080 yolo-flutter-example
+
+# Run with volume mounting for hot reload (development)
+docker run -p 8080:8080 -v $(pwd):/app yolo-flutter-example
+```
+
+### Dockerfile Information
+
+- **Source**: Based on [flutter-docker](https://github.com/iarunsaragadam/flutter-docker)
+- **Includes**: Flutter SDK, Android SDK, Java 17, and all necessary build tools
+- **Default Command**: Builds the Flutter APK in release mode
+- **Architecture**: Supports amd64 and arm64
+
+### Docker Advantages
+
+- **No Local Setup**: No need to install Flutter SDK or Android Studio
+- **Consistent Environment**: Same setup across all machines
+- **Easy Cleanup**: Containers can be removed with `docker rm`
+- **Cross-Platform**: Works on Windows, macOS, and Linux
+
+### Troubleshooting Docker
+
+**Docker not found:**
+- Install Docker Desktop from [docker.com](https://www.docker.com/products/docker-desktop)
+
+**Build fails:**
+- Ensure Docker is running and has sufficient resources (4GB+ RAM recommended)
+- Check disk space and available memory
+
+**Port already in use:**
+- Change the port mapping: `docker run -p 8081:8080 yolo-flutter-example`
+- Or stop the service using the port: `lsof -ti:8080 | xargs kill -9` (macOS/Linux) or `netstat -ano | findstr :8080` (Windows)
+
 ### Installation
 
 1. Clone the repository:
